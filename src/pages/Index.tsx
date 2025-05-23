@@ -7,16 +7,20 @@ import DayDetail from "@/components/DayDetail";
 import { useToast } from "@/components/ui/use-toast";
 import { ChevronDown } from "lucide-react";
 
-// Updated mock data with current dates for testing
+// Updated mock data with current dates for testing - using May 2025 (current month)
+const currentDate = new Date();
+const currentYear = 2025;  // Using 2025 for testing
+const currentMonth = currentDate.getMonth();
+
 const mockTrackingData = {
-  "2025-01-20": { gym: true, diet: true },   // Green - both completed
-  "2025-01-21": { gym: true, diet: false },  // Yellow - gym done, diet skipped
-  "2025-01-22": { gym: false, diet: true },  // Blue - gym skipped, diet done
-  "2025-01-23": { gym: false, diet: false }, // Red - both skipped
-  "2025-01-24": { gym: true, diet: true },   // Green - both completed
-  "2025-01-19": { gym: true, diet: false },  // Yellow - gym done, diet skipped
-  "2025-01-18": { gym: false, diet: false }, // Red - both skipped
-  "2025-01-17": { gym: true, diet: true },   // Green - both completed
+  [`${currentYear}-05-20`]: { gym: true, diet: true },   // Green - both completed
+  [`${currentYear}-05-21`]: { gym: true, diet: false },  // Yellow - gym done, diet skipped
+  [`${currentYear}-05-22`]: { gym: false, diet: true },  // Blue - gym skipped, diet done
+  [`${currentYear}-05-23`]: { gym: false, diet: false }, // Red - both skipped
+  [`${currentYear}-05-24`]: { gym: true, diet: true },   // Green - both completed
+  [`${currentYear}-05-19`]: { gym: true, diet: false },  // Yellow - gym done, diet skipped
+  [`${currentYear}-05-18`]: { gym: false, diet: false }, // Red - both skipped
+  [`${currentYear}-05-17`]: { gym: true, diet: true },   // Green - both completed
 };
 
 const Index = () => {
@@ -40,7 +44,7 @@ const Index = () => {
       gymNoDietDays
     };
   };
-
+  
   // Function to determine the day color in the calendar
   const getDayClassName = (date: Date | undefined) => {
     if (!date) return "";
@@ -80,32 +84,35 @@ const Index = () => {
     greenDay: (date: Date) => {
       const dateString = date.toISOString().split('T')[0];
       const dayData = mockTrackingData[dateString];
-      return dayData && dayData.gym && dayData.diet;
+      return !!(dayData && dayData.gym && dayData.diet);
     },
     redDay: (date: Date) => {
       const dateString = date.toISOString().split('T')[0];
       const dayData = mockTrackingData[dateString];
-      return dayData && !dayData.gym && !dayData.diet;
+      return !!(dayData && !dayData.gym && !dayData.diet);
     },
     yellowDay: (date: Date) => {
       const dateString = date.toISOString().split('T')[0];
       const dayData = mockTrackingData[dateString];
-      return dayData && dayData.gym && !dayData.diet;
+      return !!(dayData && dayData.gym && !dayData.diet);
     },
     blueDay: (date: Date) => {
       const dateString = date.toISOString().split('T')[0];
       const dayData = mockTrackingData[dateString];
-      return dayData && !dayData.gym && dayData.diet;
+      return !!(dayData && !dayData.gym && dayData.diet);
     }
   };
 
   // Define class names for the modifiers
-  const modifierClassNames = {
-    greenDay: "bg-green-200",
-    redDay: "bg-red-200",
-    yellowDay: "bg-yellow-200",
-    blueDay: "bg-blue-200"
+  const modifiersClassNames = {
+    greenDay: "bg-green-200 text-green-800 font-bold",
+    redDay: "bg-red-200 text-red-800 font-bold",
+    yellowDay: "bg-yellow-200 text-yellow-800 font-bold",
+    blueDay: "bg-blue-200 text-blue-800 font-bold"
   };
+
+  // For easier testing, set the default view month to match our mock data
+  const defaultMonth = new Date(currentYear, 4); // May is month index 4
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -146,7 +153,8 @@ const Index = () => {
               onSelect={handleDayClick}
               className="rounded-md border"
               modifiers={modifiers}
-              modifiersClassNames={modifierClassNames}
+              modifiersClassNames={modifiersClassNames}
+              defaultMonth={defaultMonth}
             />
           </CardContent>
         </Card>
