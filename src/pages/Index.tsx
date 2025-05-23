@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -8,16 +7,16 @@ import DayDetail from "@/components/DayDetail";
 import { useToast } from "@/components/ui/use-toast";
 import { ChevronDown } from "lucide-react";
 
-// For now, we'll use mock data that we'll later replace with Firebase
+// Updated mock data with current dates for testing
 const mockTrackingData = {
-  "2023-05-01": { gym: true, diet: true },
-  "2023-05-02": { gym: true, diet: false },
-  "2023-05-03": { gym: false, diet: false },
-  "2023-05-04": { gym: true, diet: true },
-  "2023-05-05": { gym: false, diet: true },
-  "2023-05-10": { gym: true, diet: true },
-  "2023-05-15": { gym: false, diet: false },
-  "2023-05-20": { gym: true, diet: false },
+  "2025-01-20": { gym: true, diet: true },   // Green - both completed
+  "2025-01-21": { gym: true, diet: false },  // Yellow - gym done, diet skipped
+  "2025-01-22": { gym: false, diet: true },  // Blue - gym skipped, diet done
+  "2025-01-23": { gym: false, diet: false }, // Red - both skipped
+  "2025-01-24": { gym: true, diet: true },   // Green - both completed
+  "2025-01-19": { gym: true, diet: false },  // Yellow - gym done, diet skipped
+  "2025-01-18": { gym: false, diet: false }, // Red - both skipped
+  "2025-01-17": { gym: true, diet: true },   // Green - both completed
 };
 
 const Index = () => {
