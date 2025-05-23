@@ -76,6 +76,38 @@ const Index = () => {
     }
   };
 
+  // Define modifiers for the calendar days
+  const modifiers = {
+    greenDay: (date: Date) => {
+      const dateString = date.toISOString().split('T')[0];
+      const dayData = mockTrackingData[dateString];
+      return dayData && dayData.gym && dayData.diet;
+    },
+    redDay: (date: Date) => {
+      const dateString = date.toISOString().split('T')[0];
+      const dayData = mockTrackingData[dateString];
+      return dayData && !dayData.gym && !dayData.diet;
+    },
+    yellowDay: (date: Date) => {
+      const dateString = date.toISOString().split('T')[0];
+      const dayData = mockTrackingData[dateString];
+      return dayData && dayData.gym && !dayData.diet;
+    },
+    blueDay: (date: Date) => {
+      const dateString = date.toISOString().split('T')[0];
+      const dayData = mockTrackingData[dateString];
+      return dayData && !dayData.gym && dayData.diet;
+    }
+  };
+
+  // Define class names for the modifiers
+  const modifierClassNames = {
+    greenDay: "bg-green-200",
+    redDay: "bg-red-200",
+    yellowDay: "bg-yellow-200",
+    blueDay: "bg-blue-200"
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Stats Bar at the top */}
@@ -114,12 +146,8 @@ const Index = () => {
               selected={selectedDate}
               onSelect={handleDayClick}
               className="rounded-md border"
-              modifiers={{
-                customStyles: (date) => getDayClassName(date) !== "",
-              }}
-              modifiersClassNames={{
-                customStyles: (date) => getDayClassName(date),
-              }}
+              modifiers={modifiers}
+              modifiersClassNames={modifierClassNames}
             />
           </CardContent>
         </Card>
