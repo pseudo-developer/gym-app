@@ -1,42 +1,49 @@
-
 import { useState, useMemo } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import EnhancedStatsBar from "@/components/EnhancedStatsBar";
 import DayDetail from "@/components/DayDetail";
-import { useToast } from "@/components/ui/use-toast";
+import { useTrackingData } from "@/hooks/useTrackingData";
 
-// Extended mock data with more dates for better testing
+// Mock data for guest mode
 const generateMockData = () => {
-  const data: Record<string, { gym: boolean; diet: boolean; gymNotes?: string; dietNotes?: string }> = {};
+  const data: Record<string, any> = {};
   const startDate = new Date('2025-05-01');
   const endDate = new Date('2025-05-31');
   
   for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    if (Math.random() > 0.3) { // 70% chance of having data
+    if (Math.random() > 0.3) {
       const dateStr = d.toISOString().split('T')[0];
       data[dateStr] = {
         gym: Math.random() > 0.3,
         diet: Math.random() > 0.4,
-        gymNotes: Math.random() > 0.7 ? "Great workout!" : undefined,
-        dietNotes: Math.random() > 0.8 ? "Stayed on track" : undefined,
+        gym_notes: Math.random() > 0.7 ? "Great workout!" : undefined,
+        diet_notes: Math.random() > 0.8 ? "Stayed on track" : undefined,
       };
     }
   }
-  
   return data;
 };
 
 interface DashboardProps {
   trackFromDate: string;
+  userId?: string;
+  isGuest?: boolean;
 }
 
-const Dashboard = ({ trackFromDate }: DashboardProps) => {
+const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [showDetail, setShowDetail] = useState(false);
-  const [trackingData, setTrackingData] = useState(generateMockData());
-  const { toast } = useToast();
+  const [guestData, setGuestData] = useState(() => generateMockData());
+
+  const { trackingData: dbData, loading, saveTrackingData } = useTrackingData(
+    isGuest ? undefined : userId, 
+    trackFromDate
+  );
+
+  // Use guest data for demo mode, database data for authenticated users
+  const trackingData = isGuest ? guestData : dbData;
 
   // Filter data based on trackFromDate
   const filteredData = useMemo(() => {
@@ -49,7 +56,6 @@ const Dashboard = ({ trackFromDate }: DashboardProps) => {
     );
   }, [trackingData, trackFromDate]);
 
-  // Calculate enhanced statistics
   const calculateStats = () => {
     const entries = Object.entries(filteredData);
     const totalDays = entries.length;
@@ -108,23 +114,36 @@ const Dashboard = ({ trackFromDate }: DashboardProps) => {
     }
   };
 
-  const handleSaveData = (date: Date, data: { gym: boolean; diet: boolean; gymNotes?: string; dietNotes?: string }) => {
+  const handleSaveData = async (date: Date, data: { gym: boolean; diet: boolean; gymNotes?: string; dietNotes?: string }) => {
     const dateStr = date.toISOString().split('T')[0];
-    setTrackingData(prev => ({
-      ...prev,
-      [dateStr]: data
-    }));
     
-    toast({
-      title: "Saved",
-      description: `Tracking data for ${date.toLocaleDateString()} has been saved.`,
-    });
-    
-    // Close the detail view after saving
-    setShowDetail(false);
+    if (isGuest) {
+      // Guest mode - update local state
+      setGuestData(prev => ({
+        ...prev,
+        [dateStr]: {
+          gym: data.gym,
+          diet: data.diet,
+          gym_notes: data.gymNotes,
+          diet_notes: data.dietNotes,
+        }
+      }));
+      setShowDetail(false);
+    } else {
+      // Authenticated user - save to database
+      const success = await saveTrackingData(dateStr, {
+        gym: data.gym,
+        diet: data.diet,
+        gym_notes: data.gymNotes,
+        diet_notes: data.dietNotes,
+      });
+      
+      if (success) {
+        setShowDetail(false);
+      }
+    }
   };
 
-  // Define modifiers for the calendar days
   const modifiers = {
     greenDay: (date: Date) => {
       const dateString = date.toISOString().split('T')[0];
@@ -157,13 +176,19 @@ const Dashboard = ({ trackFromDate }: DashboardProps) => {
 
   const defaultMonth = new Date(2025, 4); // May 2025
 
+  if (loading && !isGuest) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100"></div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/* Enhanced Stats Bar */}
       <EnhancedStatsBar stats={calculateStats()} />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        {/* Left column - Calendar */}
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>Tracking Calendar</CardTitle>
@@ -202,7 +227,6 @@ const Dashboard = ({ trackFromDate }: DashboardProps) => {
           </CardContent>
         </Card>
         
-        {/* Right column - Daily details */}
         <Card>
           <CardHeader>
             <CardTitle>

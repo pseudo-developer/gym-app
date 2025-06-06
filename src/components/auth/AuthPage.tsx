@@ -4,35 +4,21 @@ import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 
 interface AuthPageProps {
-  onAuthenticated: (username: string, isGuest?: boolean) => void;
+  onContinueAsGuest: () => void;
 }
 
-const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
+const AuthPage = ({ onContinueAsGuest }: AuthPageProps) => {
   const [isLogin, setIsLogin] = useState(true);
-
-  const handleLogin = (username: string) => {
-    onAuthenticated(username, false);
-  };
-
-  const handleSignup = (username: string) => {
-    onAuthenticated(username, false);
-  };
-
-  const handleContinueAsGuest = () => {
-    onAuthenticated("Guest", true);
-  };
 
   return (
     <div>
       {isLogin ? (
         <LoginForm
-          onLogin={handleLogin}
-          onContinueAsGuest={handleContinueAsGuest}
+          onContinueAsGuest={onContinueAsGuest}
           onSwitchToSignup={() => setIsLogin(false)}
         />
       ) : (
         <SignupForm
-          onSignup={handleSignup}
           onSwitchToLogin={() => setIsLogin(true)}
         />
       )}
