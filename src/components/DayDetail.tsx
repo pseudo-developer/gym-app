@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { 
   CircleCheck, 
   CircleX 
@@ -73,14 +74,13 @@ const DayDetail = ({ date, data, onSave }: DayDetailProps) => {
           </div>
           
           {isEditing && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setGymDone(!gymDone)}
-              className="mt-1"
-            >
-              {gymDone ? "Mark as Skipped" : "Mark as Done"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Mark as Done</span>
+              <Switch 
+                checked={gymDone}
+                onCheckedChange={setGymDone}
+              />
+            </div>
           )}
         </div>
         
@@ -117,14 +117,13 @@ const DayDetail = ({ date, data, onSave }: DayDetailProps) => {
           </div>
           
           {isEditing && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setDietDone(!dietDone)}
-              className="mt-1"
-            >
-              {dietDone ? "Mark as Not Maintained" : "Mark as Maintained"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Mark as Maintained</span>
+              <Switch 
+                checked={dietDone}
+                onCheckedChange={setDietDone}
+              />
+            </div>
           )}
         </div>
         

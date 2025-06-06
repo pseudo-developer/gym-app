@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import ThemeToggle from "./ThemeToggle";
 
 interface HeaderProps {
   username: string;
@@ -38,9 +39,12 @@ const Header = ({ username, isGuest, trackFromDate, onTrackFromDateChange, onLog
               />
             </div>
             
-            <Button variant="outline" onClick={onLogout}>
-              {isGuest ? "Exit Guest Mode" : "Logout"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button variant="outline" onClick={onLogout}>
+                {isGuest ? "Exit Guest Mode" : "Logout"}
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
