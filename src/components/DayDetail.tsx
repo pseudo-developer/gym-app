@@ -6,7 +6,6 @@ import {
   CircleCheck, 
   CircleX 
 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
 
 interface DayDetailProps {
   date: Date;
@@ -16,9 +15,10 @@ interface DayDetailProps {
     gymNotes?: string;
     dietNotes?: string;
   };
+  onSave?: (data: { gym: boolean; diet: boolean; gymNotes?: string; dietNotes?: string }) => void;
 }
 
-const DayDetail = ({ date, data }: DayDetailProps) => {
+const DayDetail = ({ date, data, onSave }: DayDetailProps) => {
   const [gymDone, setGymDone] = useState(data?.gym || false);
   const [dietDone, setDietDone] = useState(data?.diet || false);
   const [gymNotes, setGymNotes] = useState(data?.gymNotes || "");
@@ -26,11 +26,16 @@ const DayDetail = ({ date, data }: DayDetailProps) => {
   const [isEditing, setIsEditing] = useState(!data);
 
   const handleSave = () => {
-    // In a real app, this would save to Firebase
-    toast({
-      title: "Saved",
-      description: `Tracking data for ${date.toLocaleDateString()} has been saved.`,
-    });
+    const newData = {
+      gym: gymDone,
+      diet: dietDone,
+      gymNotes: gymNotes.trim() || undefined,
+      dietNotes: dietNotes.trim() || undefined,
+    };
+    
+    if (onSave) {
+      onSave(newData);
+    }
     setIsEditing(false);
   };
 
