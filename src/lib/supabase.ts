@@ -15,6 +15,9 @@ const defaultKey = supabaseAnonKey || 'placeholder-key'
 
 export const supabase = createClient(defaultUrl, defaultKey)
 
+
+
+
 // Export a flag to check if Supabase is properly configured
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey)
 
