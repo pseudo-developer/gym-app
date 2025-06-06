@@ -4,11 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import EnhancedStatsBar from "@/components/EnhancedStatsBar";
 import DayDetail from "@/components/DayDetail";
-import { useTrackingData } from "@/hooks/useTrackingData"; // <-- updated import
-
-
-// this function is being called at line 
-import { formatPrettyDate ,  toLocalDateString} from "@/utils/dateUtils";
+import { useTrackingData } from "@/hooks/useTrackingData";
 
 // Mock data for guest mode
 const generateMockData = () => {
@@ -18,7 +14,7 @@ const generateMockData = () => {
   
   for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
     if (Math.random() > 0.3) {
-      const dateStr = toLocalDateString(d); // <-- use local date string
+      const dateStr = d.toISOString().split('T')[0];
       data[dateStr] = {
         gym: Math.random() > 0.3,
         diet: Math.random() > 0.4,
@@ -119,7 +115,7 @@ const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) =
   };
 
   const handleSaveData = async (date: Date, data: { gym: boolean; diet: boolean; gymNotes?: string; dietNotes?: string }) => {
-    const dateStr = toLocalDateString(date); // <-- use local date string
+    const dateStr = date.toISOString().split('T')[0];
     
     if (isGuest) {
       // Guest mode - update local state
@@ -150,22 +146,22 @@ const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) =
 
   const modifiers = {
     greenDay: (date: Date) => {
-      const dateString = toLocalDateString(date); // <-- use local date string
+      const dateString = date.toISOString().split('T')[0];
       const dayData = trackingData[dateString];
       return !!(dayData && dayData.gym && dayData.diet);
     },
     redDay: (date: Date) => {
-      const dateString = toLocalDateString(date); // <-- use local date string
+      const dateString = date.toISOString().split('T')[0];
       const dayData = trackingData[dateString];
       return !!(dayData && !dayData.gym && !dayData.diet);
     },
     yellowDay: (date: Date) => {
-      const dateString = toLocalDateString(date); // <-- use local date string
+      const dateString = date.toISOString().split('T')[0];
       const dayData = trackingData[dateString];
       return !!(dayData && dayData.gym && !dayData.diet);
     },
     blueDay: (date: Date) => {
-      const dateString = toLocalDateString(date); // <-- use local date string
+      const dateString = date.toISOString().split('T')[0];
       const dayData = trackingData[dateString];
       return !!(dayData && !dayData.gym && dayData.diet);
     }
@@ -235,7 +231,7 @@ const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) =
           <CardHeader>
             <CardTitle>
               {showDetail && selectedDate 
-                ? `Details for ${formatPrettyDate(selectedDate)}`
+                ? `Details for ${selectedDate.toLocaleDateString()}`
                 : "Today's Plan"}
             </CardTitle>
           </CardHeader>
@@ -243,7 +239,7 @@ const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) =
             {showDetail && selectedDate ? (
               <DayDetail 
                 date={selectedDate} 
-                data={trackingData[toLocalDateString(selectedDate)]} // <-- use local date string
+                data={trackingData[selectedDate.toISOString().split('T')[0]]}
                 onSave={(data) => handleSaveData(selectedDate, data)}
               />
             ) : (

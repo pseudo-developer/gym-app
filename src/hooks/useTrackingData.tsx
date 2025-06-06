@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { useToast } from '@/components/ui/use-toast'
+import { formatPrettyDate } from "@/utils/dateUtils";
 
 export function toLocalDateString(date: Date): string {
   const year = date.getFullYear()
@@ -135,7 +136,7 @@ export const useTrackingData = (userId: string | undefined, trackFromDate: strin
 
       toast({
         title: "Saved",
-        description: `Tracking data for ${new Date(dateStr).toLocaleDateString()} has been saved.`,
+        description: `Tracking data for ${formatPrettyDate(new Date(dateStr))} has been saved.`,
       })
 
       return true
