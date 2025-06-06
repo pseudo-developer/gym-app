@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { useToast } from '@/components/ui/use-toast'
 
 export interface TrackingEntry {
@@ -18,7 +18,7 @@ export const useTrackingData = (userId: string | undefined, trackFromDate: strin
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!userId) {
+    if (!userId || !isSupabaseConfigured) {
       setLoading(false)
       return
     }
@@ -27,7 +27,7 @@ export const useTrackingData = (userId: string | undefined, trackFromDate: strin
   }, [userId, trackFromDate])
 
   const fetchTrackingData = async () => {
-    if (!userId) return
+    if (!userId || !isSupabaseConfigured) return
 
     try {
       const { data, error } = await supabase
@@ -65,7 +65,14 @@ export const useTrackingData = (userId: string | undefined, trackFromDate: strin
   }
 
   const saveTrackingData = async (date: string, data: Omit<TrackingEntry, 'date'>) => {
-    if (!userId) return
+    if (!userId || !isSupabaseConfigured) {
+      toast({
+        title: "Error",
+        description: "Database not configured. Please connect to Supabase.",
+        variant: "destructive",
+      })
+      return false
+    }
 
     try {
       const dateStr = date
