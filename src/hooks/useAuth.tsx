@@ -62,6 +62,9 @@ export const useAuth = () => {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+        emailRedirectTo: 'https://pseudo-developer.github.io/gym-app/',
+      }
       })
       return { data, error }
     } catch (error) {

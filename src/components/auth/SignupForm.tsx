@@ -34,7 +34,10 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
     }
 
     try {
-      const { error } = await signUp(email, password);
+      // const { error } = await signUp(email, password);
+      const { data, error } = await signUp(
+      email,password
+    );
       
       if (error) {
         toast({
