@@ -62,11 +62,13 @@ const LoginForm = ({ onContinueAsGuest, onSwitchToSignup }: LoginFormProps) => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setForgotLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
       redirectTo,
     });
+
     console.log("Password reset email sent to:", forgotEmail);
     console.log(error);
+
     if (error) {
       toast({
         title: "Error",
