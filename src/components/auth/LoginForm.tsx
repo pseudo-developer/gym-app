@@ -26,7 +26,7 @@ const LoginForm = ({ onContinueAsGuest, onSwitchToSignup }: LoginFormProps) => {
   const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
   const redirectTo = isLocal
     ? "http://localhost:8080/reset-password"
-    : "https://your-production-domain.com/reset-password"; // <-- replace with your real domain
+    : "https://pseudo-developer.github.io/gym-app/reset-password"; // <-- replace with your real domain
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
