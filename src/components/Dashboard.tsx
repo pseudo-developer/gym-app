@@ -67,6 +67,12 @@ const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) =
     const dietDays = entries.filter(([, day]) => day.diet).length;
     const perfectDays = entries.filter(([, day]) => day.gym && day.diet).length;
     const gymNoDietDays = entries.filter(([, day]) => day.gym && !day.diet).length;
+
+  // Count days excluding Sundays
+  const totalDaysExcludingSundays = entries.filter(([dateStr]) => {
+    const date = new Date(dateStr);
+    return date.getDay() !== 0; // 0 = Sunday
+  }).length;
     
     const gymSuccessRate = totalDays > 0 ? Math.round((gymDays / totalDays) * 100) : 0;
     const dietSuccessRate = totalDays > 0 ? Math.round((dietDays / totalDays) * 100) : 0;
@@ -98,6 +104,7 @@ const Dashboard = ({ trackFromDate, userId, isGuest = false }: DashboardProps) =
     
     return {
       totalDays,
+      totalDaysExcludingSundays,
       gymDays,
       dietDays,
       perfectDays,
